@@ -884,7 +884,7 @@ namespace Ryujinx.Ui
         {
             Process.Start(new ProcessStartInfo()
             {
-                FileName        = AppDataManager.BaseDirPath,
+                FileName        = AppDataManager.BaseDirPath + "\\",
                 UseShellExecute = true,
                 Verb            = "open"
             });

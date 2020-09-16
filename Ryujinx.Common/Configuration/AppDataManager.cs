@@ -32,8 +32,8 @@ namespace Ryujinx.Common.Configuration
 
         static AppDataManager()
         {
-            _defaultBaseDirPath = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.ApplicationData), DefaultBaseDir);
-            KeysDirPathAlt = Path.Combine(Environment.GetFolderPath(Environment.SpecialFolder.UserProfile), ".switch");
+            _defaultBaseDirPath = Path.Combine(Environment.CurrentDirectory, DefaultBaseDir);
+            KeysDirPathAlt = Path.Combine(Environment.CurrentDirectory, ".switch");
         }
 
         public static void Initialize(string baseDirPath)

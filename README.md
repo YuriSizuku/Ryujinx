@@ -10,7 +10,7 @@
 </h1>
 
 <p align="center">
-    <i>An experimental Switch emulator written in C#</i><br />
+    <i>An experimental Switch emulator written in C#, portable version</i><br />
     <br />
     <img src="https://raw.githubusercontent.com/Ryujinx/Ryujinx-Website/master/static/public/shell_fullsize.png">
 </p>
