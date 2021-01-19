@@ -9,6 +9,8 @@ namespace Ryujinx.Graphics.GAL
 
         void BeginTransformFeedback(PrimitiveTopology topology);
 
+        void ClearBuffer(BufferHandle destination, int offset, int size, uint value);
+
         void ClearRenderTargetColor(int index, uint componentMask, ColorF color);
 
         void ClearRenderTargetDepthStencil(
@@ -46,11 +48,9 @@ namespace Ryujinx.Graphics.GAL
 
         void SetIndexBuffer(BufferRange buffer, IndexType type);
 
-        void SetImage(int index, ShaderStage stage, ITexture texture);
+        void SetImage(int binding, ITexture texture, Format imageFormat);
 
         void SetLogicOpState(bool enable, LogicalOp op);
-
-        void SetOrigin(Origin origin);
 
         void SetPointParameters(float size, bool isProgramPointSize, bool enablePointSprite, Origin origin);
 
@@ -66,19 +66,19 @@ namespace Ryujinx.Graphics.GAL
         void SetRenderTargetColorMasks(ReadOnlySpan<uint> componentMask);
         void SetRenderTargets(ITexture[] colors, ITexture depthStencil);
 
-        void SetSampler(int index, ShaderStage stage, ISampler sampler);
+        void SetSampler(int binding, ISampler sampler);
 
         void SetScissorEnable(int index, bool enable);
         void SetScissor(int index, int x, int y, int width, int height);
 
         void SetStencilTest(StencilTestDescriptor stencilTest);
 
-        void SetStorageBuffer(int index, ShaderStage stage, BufferRange buffer);
+        void SetStorageBuffers(ReadOnlySpan<BufferRange> buffers);
 
-        void SetTexture(int index, ShaderStage stage, ITexture texture);
+        void SetTexture(int binding, ITexture texture);
 
-        void SetTransformFeedbackBuffer(int index, BufferRange buffer);
-        void SetUniformBuffer(int index, ShaderStage stage, BufferRange buffer);
+        void SetTransformFeedbackBuffers(ReadOnlySpan<BufferRange> buffers);
+        void SetUniformBuffers(ReadOnlySpan<BufferRange> buffers);
 
         void SetUserClipDistance(int index, bool enableClip);
 
@@ -94,6 +94,6 @@ namespace Ryujinx.Graphics.GAL
         bool TryHostConditionalRendering(ICounterEvent value, ICounterEvent compare, bool isEqual);
         void EndHostConditionalRendering();
 
-        void UpdateRenderScale(ShaderStage stage, int textureCount);
+        void UpdateRenderScale(ShaderStage stage, float[] scales, int textureCount, int imageCount);
     }
 }

@@ -82,6 +82,8 @@ namespace Ryujinx.Graphics.GAL
         Bc7Srgb,
         Bc6HSfloat,
         Bc6HUfloat,
+        Etc2RgbaUnorm,
+        Etc2RgbaSrgb,
         R8Uscaled,
         R8Sscaled,
         R16Uscaled,
@@ -340,6 +342,26 @@ namespace Ryujinx.Graphics.GAL
         public static bool IsInteger(this Format format)
         {
             return format.IsUint() || format.IsSint();
+        }
+
+        /// <summary>
+        /// Checks if the texture format is a BC4 compressed format.
+        /// </summary>
+        /// <param name="format">Texture format</param>
+        /// <returns>True if the texture format is a BC4 compressed format, false otherwise</returns>
+        public static bool IsBc4(this Format format)
+        {
+            return format == Format.Bc4Unorm || format == Format.Bc4Snorm;
+        }
+
+        /// <summary>
+        /// Checks if the texture format is a BC5 compressed format.
+        /// </summary>
+        /// <param name="format">Texture format</param>
+        /// <returns>True if the texture format is a BC5 compressed format, false otherwise</returns>
+        public static bool IsBc5(this Format format)
+        {
+            return format == Format.Bc5Unorm || format == Format.Bc5Snorm;
         }
     }
 }

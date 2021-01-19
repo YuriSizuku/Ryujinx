@@ -26,6 +26,8 @@ namespace ARMeilleure.Decoders
 
             Dictionary<ulong, Block> visited = new Dictionary<ulong, Block>();
 
+            Debug.Assert(MaxInstsPerFunctionLowCq <= MaxInstsPerFunction);
+
             int opsCount = 0;
 
             int instructionLimit = highCq ? MaxInstsPerFunction : MaxInstsPerFunctionLowCq;
@@ -339,7 +341,7 @@ namespace ARMeilleure.Decoders
 
             if (makeOp != null)
             {
-                return (OpCode)makeOp(inst, address, opCode);
+                return makeOp(inst, address, opCode);
             }
             else
             {

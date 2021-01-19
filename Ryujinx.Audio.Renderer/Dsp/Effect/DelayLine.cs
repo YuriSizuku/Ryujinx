@@ -1,5 +1,5 @@
 //
-// Copyright (c) 2019-2020 Ryujinx
+// Copyright (c) 2019-2021 Ryujinx
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU Lesser General Public License as published by
@@ -42,7 +42,15 @@ namespace Ryujinx.Audio.Renderer.Dsp.Effect
         {
             CurrentSampleCount = Math.Min(SampleCountMax, targetSampleCount);
             _currentSampleIndex = 0;
-            _lastSampleIndex = CurrentSampleCount - 1;
+
+            if (CurrentSampleCount == 0)
+            {
+                _lastSampleIndex = 0;
+            }
+            else
+            {
+                _lastSampleIndex = CurrentSampleCount - 1;
+            }
         }
 
         public void SetDelay(float delayTime)

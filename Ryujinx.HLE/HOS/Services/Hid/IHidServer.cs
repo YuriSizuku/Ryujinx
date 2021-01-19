@@ -35,7 +35,7 @@ namespace Ryujinx.HLE.HOS.Services.Hid
         private HidAccelerometerParameters _accelerometerParams;
         private HidVibrationValue          _vibrationValue;
 
-        public IHidServer(ServiceCtx context)
+        public IHidServer(ServiceCtx context) : base(context.Device.System.HidServer)
         {
             _xpadIdEvent                 = new KEvent(context.Device.System.KernelContext);
             _palmaOperationCompleteEvent = new KEvent(context.Device.System.KernelContext);
@@ -559,9 +559,9 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             ControllerType type = (ControllerType)context.RequestData.ReadInt32();
             long appletResourceUserId = context.RequestData.ReadInt64();
 
-            Logger.Stub?.PrintStub(LogClass.ServiceHid, new { 
-                    appletResourceUserId, 
-                    type 
+            Logger.Stub?.PrintStub(LogClass.ServiceHid, new {
+                    appletResourceUserId,
+                    type
                 });
 
             context.Device.Hid.Npads.SupportedStyleSets = type;
@@ -577,9 +577,9 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
             context.ResponseData.Write((int)context.Device.Hid.Npads.SupportedStyleSets);
 
-            Logger.Stub?.PrintStub(LogClass.ServiceHid, new { 
+            Logger.Stub?.PrintStub(LogClass.ServiceHid, new {
                     appletResourceUserId,
-                    context.Device.Hid.Npads.SupportedStyleSets 
+                    context.Device.Hid.Npads.SupportedStyleSets
                 });
 
             return ResultCode.Success;
@@ -704,9 +704,9 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             long appletResourceUserId = context.RequestData.ReadInt64();
             context.Device.Hid.Npads.JoyHold = (NpadJoyHoldType)context.RequestData.ReadInt64();
 
-            Logger.Stub?.PrintStub(LogClass.ServiceHid, new { 
-                    appletResourceUserId, 
-                    context.Device.Hid.Npads.JoyHold 
+            Logger.Stub?.PrintStub(LogClass.ServiceHid, new {
+                    appletResourceUserId,
+                    context.Device.Hid.Npads.JoyHold
                 });
 
             return ResultCode.Success;
@@ -720,9 +720,9 @@ namespace Ryujinx.HLE.HOS.Services.Hid
 
             context.ResponseData.Write((long)context.Device.Hid.Npads.JoyHold);
 
-            Logger.Stub?.PrintStub(LogClass.ServiceHid, new { 
-                    appletResourceUserId, 
-                    context.Device.Hid.Npads.JoyHold 
+            Logger.Stub?.PrintStub(LogClass.ServiceHid, new {
+                    appletResourceUserId,
+                    context.Device.Hid.Npads.JoyHold
                 });
 
             return ResultCode.Success;
@@ -1190,6 +1190,17 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             return ResultCode.Success;
         }
 
+        [Command(310)] // 6.0.0+
+        // ResetSevenSixAxisSensorTimestamp(pid, nn::applet::AppletResourceUserId)
+        public ResultCode ResetSevenSixAxisSensorTimestamp(ServiceCtx context)
+        {
+            long appletResourceUserId = context.RequestData.ReadInt64();
+
+            Logger.Stub?.PrintStub(LogClass.ServiceHid, new { appletResourceUserId });
+
+            return ResultCode.Success;
+        }
+
         [Command(400)]
         // IsUsbFullKeyControllerEnabled() -> bool IsEnabled
         public ResultCode IsUsbFullKeyControllerEnabled(ServiceCtx context)
@@ -1498,6 +1509,18 @@ namespace Ryujinx.HLE.HOS.Services.Hid
             context.ResponseData.Write(_npadCommunicationMode);
 
             Logger.Stub?.PrintStub(LogClass.ServiceHid, new { _npadCommunicationMode });
+
+            return ResultCode.Success;
+        }
+
+        [Command(1002)] // 9.0.0+
+        // SetTouchScreenConfiguration(nn::hid::TouchScreenConfigurationForNx, nn::applet::AppletResourceUserId)
+        public ResultCode SetTouchScreenConfiguration(ServiceCtx context)
+        {
+            long touchScreenConfigurationForNx = context.RequestData.ReadInt64();
+            long appletResourceUserId          = context.RequestData.ReadInt64();
+
+            Logger.Stub?.PrintStub(LogClass.ServiceHid, new { appletResourceUserId, touchScreenConfigurationForNx });
 
             return ResultCode.Success;
         }

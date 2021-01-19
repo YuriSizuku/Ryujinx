@@ -10,7 +10,9 @@ using Ryujinx.HLE.FileSystem;
 using Ryujinx.HLE.FileSystem.Content;
 using Ryujinx.HLE.HOS;
 using Ryujinx.HLE.HOS.Services;
+using Ryujinx.HLE.HOS.Services.Apm;
 using Ryujinx.HLE.HOS.Services.Hid;
+using Ryujinx.HLE.HOS.Services.Nv.NvDrvServices;
 using Ryujinx.HLE.HOS.SystemState;
 using Ryujinx.Memory;
 using System;
@@ -25,6 +27,8 @@ namespace Ryujinx.HLE
 
         public GpuContext Gpu { get; private set; }
 
+        internal NvMemoryAllocator MemoryAllocator { get; private set; }
+
         internal Host1xDevice Host1x { get; }
 
         public VirtualFileSystem FileSystem { get; private set; }
@@ -35,13 +39,15 @@ namespace Ryujinx.HLE
 
         public PerformanceStatistics Statistics { get; private set; }
 
+        public UserChannelPersistence UserChannelPersistence { get; }
+
         public Hid Hid { get; private set; }
 
         public IHostUiHandler UiHandler { get; set; }
 
         public bool EnableDeviceVsync { get; set; } = true;
 
-        public Switch(VirtualFileSystem fileSystem, ContentManager contentManager, IRenderer renderer, IAalOutput audioOut)
+        public Switch(VirtualFileSystem fileSystem, ContentManager contentManager, UserChannelPersistence userChannelPersistence, IRenderer renderer, IAalOutput audioOut)
         {
             if (renderer == null)
             {
@@ -53,11 +59,20 @@ namespace Ryujinx.HLE
                 throw new ArgumentNullException(nameof(audioOut));
             }
 
+            if (userChannelPersistence == null)
+            {
+                throw new ArgumentNullException(nameof(userChannelPersistence));
+            }
+
+            UserChannelPersistence = userChannelPersistence;
+
             AudioOut = audioOut;
 
             Memory = new MemoryBlock(1UL << 32);
 
             Gpu = new GpuContext(renderer);
+
+            MemoryAllocator = new NvMemoryAllocator();
 
             Host1x = new Host1xDevice(Gpu.Synchronization);
             var nvdec = new NvdecDevice(Gpu.MemoryManager);
@@ -83,6 +98,7 @@ namespace Ryujinx.HLE
             FileSystem = fileSystem;
 
             System = new Horizon(this, contentManager);
+            System.InitializeServices();
 
             Statistics = new PerformanceStatistics();
 
@@ -102,10 +118,7 @@ namespace Ryujinx.HLE
 
             System.State.DockedMode = ConfigurationState.Instance.System.EnableDockedMode;
 
-            if (ConfigurationState.Instance.System.EnableMulticoreScheduling)
-            {
-                System.EnableMultiCoreScheduling();
-            }
+            System.PerformanceState.PerformanceMode = System.State.DockedMode ? PerformanceMode.Boost : PerformanceMode.Default;
 
             System.EnablePtc = ConfigurationState.Instance.System.EnablePtc;
 
@@ -162,6 +175,11 @@ namespace Ryujinx.HLE
             Gpu.Renderer.PreFrame();
 
             Gpu.GPFifo.DispatchCalls();
+        }
+
+        public bool ConsumeFrameAvailable()
+        {
+            return Gpu.Window.ConsumeFrameAvailable();
         }
 
         public void PresentFrame(Action swapBuffersCallback)
